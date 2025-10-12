@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login – Sabrooso & Chill</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #fff9f3;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-card {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 350px;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            color: #e8590c;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .error-msg {
+            color: red;
+            display: none;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-card">
+        <div class="logo-text">Sabrooso & Chill</div>
+        <div class="error-msg" id="errorMsg">Invalid username or password</div>
+        <form id="loginForm">
+            <!-- <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" id="username" class="form-control" placeholder="Enter username" required>
+      </div> -->
+            <div class="mb-3">
+                <label for="username" class="form-label">User Type</label>
+                <select id="username" class="form-select" required>
+                    <option value="" disabled selected>Select user type</option>
+                    <option value="admin">Admin</option>
+                    <option value="staff">Staff</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" class="form-control" placeholder="Enter password" required>
+            </div>
+            <button type="submit" class="btn btn-warning w-100">Login</button>
+        </form>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById("loginForm");
+        const errorMsg = document.getElementById("errorMsg");
+
+        loginForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const username = document.getElementById("username").value.trim().toLowerCase();
+            const password = document.getElementById("password").value.trim();
+
+            if (username === "admin" && password === "ASDF") {
+                window.location.href = "index.html"; // Admin panel
+            }
+            else if (username === "staff" && password === "1356") {
+                window.location.href = "sales.html"; // Staff sales page
+            }
+            else {
+                errorMsg.style.display = "block";
+            }
+        });
+    </script>
+</body>
+
+</html>

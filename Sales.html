@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sabrooso & Chill – Sales Entry</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #fff9f3;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-submit {
+            background: #e8590c;
+            color: #fff;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            background: #c94806;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            color: #e8590c;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container py-5">
+        <div class="text-center mb-4">
+            <h2 class="logo-text">Sabrooso & Chill</h2>
+            <p class="text-muted">Daily Sales Entry Form</p>
+        </div>
+
+        <div class="card p-4 mx-auto" style="max-width: 600px;">
+            <form id="salesForm">
+                <div class="mb-3">
+                    <label for="salesmanName" class="form-label">Salesman Name</label>
+                    <input type="text" class="form-control" id="salesmanName" name="salesmanName" value="SIFAT"
+                        required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="itemName" class="form-label">Select Item</label>
+                    <select class="form-select" id="itemName" name="itemName" required>
+                        <option value="">-- Select Item --</option>
+                        <option value="Pora Ruti with Malai Cha">Pora Ruti with Malai Cha – 60 TK</option>
+                        <option value="Pora Ruti with Dudh Cha">Pora Ruti with Dudh Cha – 50 TK</option>
+                        <option value="Malai Cha">Malai Cha – 40 TK</option>
+                        <option value="Dudh Cha">Dudh Cha – 30 TK</option>
+                        <option value="Rang Cha">Rang Cha – 10 TK</option>
+                        <option value="Ada Cha">Ada Cha – 10 TK</option>
+                        <option value="Lebu Cha">Lebu Cha – 15 TK</option>
+                        <option value="Chicken Regular Burger">Chicken Regular Burger – 60 TK</option>
+                        <option value="Naga Burger">Naga Burger – 70 TK</option>
+                        <option value="Home Made Naga Singara (3 pcs)">Home Made Naga Singara (3 pcs) – 20 TK</option>
+                        <option value="Shor Ruti">Shor Ruti – 70 TK</option>
+                        <option value="Doi Chera">Doi Chera – 60 TK</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1"
+                            required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="price" class="form-label">Price (TK)</label>
+                        <input type="number" class="form-control" id="price" name="price" readonly>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="remarks" class="form-label">Remarks (optional)</label>
+                    <textarea class="form-control" id="remarks" name="remarks" value="No Issue" rows="2"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-submit w-100 py-2">Submit Sale</button>
+            </form>
+
+            <div id="msg" class="text-center mt-3 fw-semibold"></div>
+        </div>
+    </div>
+
+    <script>
+        // Price map
+        const prices = {
+            "Pora Ruti with Malai Cha": 60,
+            "Pora Ruti with Dudh Cha": 50,
+            "Malai Cha": 40,
+            "Dudh Cha": 30,
+            "Rang Cha": 10,
+            "Ada Cha": 10,
+            "Lebu Cha": 15,
+            "Chicken Regular Burger": 60,
+            "Naga Burger": 70,
+            "Home Made Naga Singara (3 pcs)": 20,
+            "Shor Ruti": 70,
+            "Doi Chera": 60
+        };
+
+        const itemSelect = document.getElementById("itemName");
+        const quantityInput = document.getElementById("quantity");
+        const priceInput = document.getElementById("price");
+
+        function updateTotalPrice() {
+            const item = itemSelect.value;
+            const qty = parseInt(quantityInput.value) || 0;
+            const unitPrice = prices[item] || 0;
+            priceInput.value = unitPrice * qty;
+        }
+
+        // Update total price when item or quantity changes
+        itemSelect.addEventListener("change", updateTotalPrice);
+        quantityInput.addEventListener("input", updateTotalPrice);
+
+        // Handle form submit
+        document.getElementById("salesForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            const scriptURL = "https://script.google.com/macros/s/AKfycbzy1BqyOs1rUu-LNSUjDy0ge_ofP_3cMNMRdALioMvG1_2BvVzvjlLBos2mB32vRBGS/exec";
+
+            fetch(scriptURL, {
+                method: "POST",
+                body: new URLSearchParams(data),
+                redirect: "follow"
+            })
+                .then(res => res.text())
+                .then(response => {
+                    document.getElementById("msg").innerHTML = "✅ Sale submitted successfully!";
+                    document.getElementById("salesForm").reset();
+                    priceInput.value = ""; // reset price field
+                    updateTotalPrice();    // recalc default price after reset
+
+                    // Hide message after 3 seconds
+                    setTimeout(() => {
+                        document.getElementById("msg").innerHTML = "";
+                    }, 10000);
+                })
+                .catch(err => {
+                    document.getElementById("msg").innerHTML = "❌ Error submitting sale!";
+                    console.error("Error!", err.message);
+                });
+        });
+    </script>
+
+
+</body>
+
+</html>
