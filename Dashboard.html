@@ -62,8 +62,9 @@
               <th>Salesman</th>
               <th>Item</th>
               <th>Qty</th>
-              <th>Price</th>
-              <th>Total</th>
+              <th>Total Price</th>
+              <!-- <th>Total</th> 
+                <td><b>${total}</b></td>-->
               <th>Remarks</th>
             </tr>
           </thead>
@@ -91,7 +92,7 @@
 
       sales.forEach(s => {
         const total = s.quantity * s.price;
-        totalAmount += total;
+        totalAmount += s.price;
         totalItems += s.quantity;
 
         const row = `
@@ -101,7 +102,7 @@
             <td>${s.item}</td>
             <td>${s.quantity}</td>
             <td>${s.price}</td>
-            <td><b>${total}</b></td>
+            
             <td>${s.remarks}</td>
           </tr>`;
         tableBody.insertAdjacentHTML("beforeend", row);
