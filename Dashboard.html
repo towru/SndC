@@ -73,8 +73,75 @@
       </div>
     </div>
   </div>
+<script>
+  const scriptURL = "https://script.google.com/macros/s/AKfycbzy1BqyOs1rUu-LNSUjDy0ge_ofP_3cMNMRdALioMvG1_2BvVzvjlLBos2mB32vRBGS/exec";
 
-  <script>
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("filterDate").value = today;
+
+  async function loadSales(date = "") {
+    const url = date ? `${scriptURL}?date=${date}` : scriptURL;
+    const res = await fetch(url);
+    const sales = await res.json();
+
+    const tableBody = document.querySelector("#salesTable tbody");
+    tableBody.innerHTML = "";
+    let totalAmount = 0;
+    let totalItems = 0;
+
+    sales.forEach(s => {
+      let formattedDate = "N/A";
+
+      if (s.date) {
+        const d = s.date.trim(); // "10/17/2025 19:59:48"
+
+        // ✅ Try to parse manually
+        const match = d.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2}):(\d{2})$/);
+        if (match) {
+          const [, month, day, year, hour, minute, second] = match.map(v => v.padStart(2, "0"));
+          const dateObj = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
+          if (!isNaN(dateObj)) {
+            formattedDate = dateObj.toLocaleString("en-GB", {
+              timeZone: "Asia/Dhaka",
+              hour12: true
+            });
+          }
+        }
+      }
+
+      const total = s.quantity * s.price;
+      totalAmount += s.price;
+      totalItems += s.quantity;
+
+      const row = `
+        <tr>
+          <td>${formattedDate}</td>
+          <td>${s.salesman}</td>
+          <td>${s.item}</td>
+          <td>${s.quantity}</td>
+          <td>${s.price}</td>
+          <td>${s.remarks}</td>
+        </tr>`;
+      tableBody.insertAdjacentHTML("beforeend", row);
+    });
+
+    document.getElementById("todayTotal").innerText = "৳ " + totalAmount.toLocaleString();
+    document.getElementById("todayCount").innerText = totalItems + " Items Sold";
+  }
+
+  document.getElementById("loadData").addEventListener("click", () => {
+    const selectedDate = document.getElementById("filterDate").value;
+    loadSales(selectedDate);
+  });
+
+  // Auto-load today's data
+  loadSales(today);
+</script>
+
+
+
+
+  <!-- <script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbzy1BqyOs1rUu-LNSUjDy0ge_ofP_3cMNMRdALioMvG1_2BvVzvjlLBos2mB32vRBGS/exec";
 
     const today = new Date().toISOString().split("T")[0];
@@ -94,10 +161,27 @@
         const total = s.quantity * s.price;
         totalAmount += s.price;
         totalItems += s.quantity;
-
+// ✅ Convert Google Sheet date/time properly
+      let saleDateTime = "N/A";
+      if (s.date) {
+        // Google Sheets often sends timestamps like "2025-10-17T06:30:00.000Z"
+        const parsedDate = new Date(s.date);
+        if (!isNaN(parsedDate)) {
+          saleDateTime = parsedDate.toLocaleString("en-US", {
+            timeZone: "Asia/Dhaka",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+          });
+        }
+        console.log("Parsed Date:", parsedDate, "Formatted:", saleDateTime);
+      }
         const row = `
           <tr>
-            <td>${s.date}</td>
+            <td>${s.saleDateTime}</td>
             <td>${s.salesman}</td>
             <td>${s.item}</td>
             <td>${s.quantity}</td>
@@ -119,7 +203,7 @@
 
     // Auto-load today's data
     loadSales(today);
-  </script>
+  </script> -->
 
 </body>
 </html>
