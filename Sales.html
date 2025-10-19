@@ -60,7 +60,7 @@
                         <option value="Pora Ruti with Dudh Cha">Pora Ruti with Dudh Cha – 50 TK</option>
                         <option value="Malai Cha">Malai Cha – 40 TK</option>
                         <option value="Dudh Cha">Dudh Cha – 30 TK</option>
-                         <option value="Pora Ruti">Pora Ruti – 20 TK</option>
+                        <option value="Pora Ruti">Pora Ruti – 20 TK</option>
                         <option value="Rang Cha">Rang Cha – 10 TK</option>
                         <option value="Ada Cha">Ada Cha – 10 TK</option>
                         <option value="Lebu Cha">Lebu Cha – 15 TK</option>
@@ -89,7 +89,7 @@
                     <textarea class="form-control" id="remarks" name="remarks" value="No Issue" rows="2"></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-submit w-100 py-2">Submit Sale</button>
+                <button type="submit" id="submitButton" class="btn btn-submit w-100 py-2">Submit Sale</button>
             </form>
 
             <div id="msg" class="text-center mt-3 fw-semibold"></div>
@@ -117,6 +117,8 @@
         const itemSelect = document.getElementById("itemName");
         const quantityInput = document.getElementById("quantity");
         const priceInput = document.getElementById("price");
+        const submitButton = document.getElementById("submitButton");
+       
 
         function updateTotalPrice() {
             const item = itemSelect.value;
@@ -131,10 +133,11 @@
 
         // Handle form submit
         document.getElementById("salesForm").addEventListener("submit", function (e) {
+            
             e.preventDefault();
             const formData = new FormData(this);
             const data = Object.fromEntries(formData.entries());
-
+            submitButton.disabled = true;
             const scriptURL = "https://script.google.com/macros/s/AKfycbzy1BqyOs1rUu-LNSUjDy0ge_ofP_3cMNMRdALioMvG1_2BvVzvjlLBos2mB32vRBGS/exec";
 
             fetch(scriptURL, {
@@ -152,6 +155,7 @@
                     // Hide message after 3 seconds
                     setTimeout(() => {
                         document.getElementById("msg").innerHTML = "";
+                        submitButton.disabled = false;
                     }, 10000);
                 })
                 .catch(err => {
